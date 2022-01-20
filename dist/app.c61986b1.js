@@ -151,12 +151,6 @@ function () {
     // this.notify()
     this.transactions.push(transac);
     console.log('addtransaction');
-
-    if (transac.getType() === 'debit') {
-      this.solde -= transac.getMontant();
-    } else {
-      this.solde += transac.getMontant();
-    }
   };
 
   Caisses.prototype.notify = function () {
@@ -176,6 +170,14 @@ function () {
     return this.solde;
   };
 
+  Caisses.prototype.setSoldeDebit = function (montant) {
+    this.solde -= montant;
+  };
+
+  Caisses.prototype.setSoldeCredit = function (montant) {
+    this.solde += montant;
+  };
+
   return Caisses;
 }();
 
@@ -191,25 +193,8 @@ exports.listeTransac = void 0;
 var listeTransac =
 /** @class */
 function () {
-  // private liHtml: HTMLLIElement;
-  // private headHtml: HTMLHeadElement;
-  // private paraHtml: HTMLParagraphElement;
   function listeTransac() {
-    this.ul = document.querySelector('.listeOrdonnee'); //macaisse.subscribe(this)
-    // this.liHtml = document.createElement('li');
-    // this.headHtml = document.createElement('h4')
-    // this.paraHtml = document.createElement('p')
-    // let transac = macaisse.getTransac()
-    // transac.forEach(trs => {
-    //     //if()
-    //     console.log('entrée');
-    //     this.liHtml.className = trs.getType()
-    //     this.headHtml.innerText = `${trs.getType() === 'debit' ? 'Debit' : 'Credit'}`;
-    //     this.paraHtml.innerHTML = trs.setText()
-    // })
-    // ul.append(this.liHtml)
-    // this.liHtml.append(this.headHtml)
-    // this.liHtml.append(this.paraHtml)
+    this.ul = document.querySelector('.listeOrdonnee');
   }
 
   listeTransac.prototype.update = function (caisse) {
@@ -242,11 +227,16 @@ exports.Transaction = void 0;
 var Transaction =
 /** @class */
 function () {
-  function Transaction(type, montant, motif) {
+  function Transaction(nomClient, type, montant, motif) {
     this.typeTransac = type;
     this.montantTtransac = montant;
     this.motifTransac = motif;
+    this.client = nomClient;
   }
+
+  Transaction.prototype.getNomClient = function () {
+    return this.client;
+  };
 
   Transaction.prototype.getType = function () {
     return this.typeTransac;
@@ -268,6 +258,176 @@ function () {
 }();
 
 exports.Transaction = Transaction;
+},{}],"src/classes/viewEtat.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ViewEtat = void 0;
+
+var ViewEtat =
+/** @class */
+function () {
+  function ViewEtat() {
+    this.div = document.querySelector('.etat');
+    this.head = document.createElement('h3');
+    this.head.innerText = 'Etat'; // this.head.className = 'etatVert';
+
+    this.div.append(this.head);
+  }
+
+  ViewEtat.prototype.update = function (caisse) {
+    var solde = caisse.getSolde();
+
+    if (solde >= 0) {
+      this.head.innerText = 'A couvert';
+      this.div.className = 'etatVert';
+    } else {
+      this.head.innerText = 'A découvert';
+      this.div.className = 'etatRouge';
+    }
+  };
+
+  return ViewEtat;
+}();
+
+exports.ViewEtat = ViewEtat;
+},{}],"src/classes/viewListClient.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ViewListClient = void 0;
+
+var ViewListClient =
+/** @class */
+function () {
+  function ViewListClient() {
+    this.tables = document.querySelector('.table-liste-client');
+    this.tr = document.createElement('tr');
+    this.tdClCredit = document.createElement('td');
+    this.tdClDebit = document.createElement('td');
+    this.tdClient = document.createElement('td');
+    this.tr.append(this.tdClient, this.tdClDebit, this.tdClCredit);
+    this.tables.append(this.tr);
+  }
+
+  ViewListClient.prototype.update = function (caisse) {
+    var _this = this;
+
+    var transactions = caisse.getTransac();
+    transactions.forEach(function (transaction) {
+      if (transaction.getType() === 'debit') {
+        _this.tdClient.innerText = transaction.getNomClient();
+        _this.tdClCredit.innerText = '0';
+        _this.tdClDebit.innerText = transaction.getMontant().toString();
+      } else {
+        _this.tdClient.innerText = transaction.client;
+        _this.tdClCredit.innerText = transaction.getMontant().toString();
+        _this.tdClDebit.innerText = '0';
+      }
+    });
+  };
+
+  return ViewListClient;
+}();
+
+exports.ViewListClient = ViewListClient;
+},{}],"src/classes/viewNbreTransac.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ViewNbreTransac = void 0;
+
+var ViewNbreTransac =
+/** @class */
+function () {
+  function ViewNbreTransac() {
+    this.table = document.querySelector('.table-nbr-transac');
+    this.tr = document.createElement('tr');
+    this.tdDebit = document.createElement('td');
+    this.tdCredit = document.createElement('td');
+    this.tdCredit.innerText = '0';
+    this.tdDebit.innerText = '0';
+    this.tr.append(this.tdDebit, this.tdCredit);
+    this.table.append(this.tr);
+  }
+
+  ViewNbreTransac.prototype.update = function (caisse) {
+    var _this = this;
+
+    var transactions = caisse.getTransac();
+    var cptDebit = 0;
+    var cptCredit = 0;
+    transactions.forEach(function (transaction) {
+      if (transaction.getType() === 'debit') {
+        cptDebit++;
+        _this.tdDebit.innerText = cptDebit.toString();
+      } else {
+        cptCredit++;
+        _this.tdCredit.innerText = cptCredit.toString();
+      }
+    });
+  };
+
+  return ViewNbreTransac;
+}();
+
+exports.ViewNbreTransac = ViewNbreTransac;
+},{}],"src/classes/viewSolde.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ViewSolde = void 0;
+
+var ViewSolde =
+/** @class */
+function () {
+  function ViewSolde() {
+    this.div = document.querySelector('.solde');
+    this.head = document.createElement('h2');
+    this.head.innerText = 'Solde : ';
+    this.span = document.createElement('span');
+    this.head.append(this.span);
+    this.div.append(this.head);
+  }
+
+  ViewSolde.prototype.viewSolde = function (caisse, transac) {
+    if (transac.getType() === 'debit' && caisse.getSolde() >= transac.getMontant()) {
+      caisse.setSoldeDebit(transac.getMontant());
+      this.span.innerText = caisse.getSolde().toString();
+      console.log("Compte debite de : ".concat(transac.getMontant(), " nouveau solde ").concat(caisse.getSolde()));
+    } else if (transac.getType() === 'debit' && caisse.getSolde() <= transac.getMontant()) {
+      caisse.setSoldeDebit(transac.getMontant());
+      this.span.className = 'soldeDecouver';
+      this.span.innerText = caisse.getSolde().toString();
+      console.log("Votre solde est inferieur au montant à débiter");
+      console.log("Compte debite de : ".concat(transac.getMontant(), " nouveau solde ").concat(caisse.getSolde()));
+    } else if (transac.getType() === 'credit') {
+      caisse.setSoldeCredit(transac.getMontant());
+      this.span.className = 'soldeCouver';
+      this.span.innerText = caisse.getSolde().toString();
+      console.log("Compte credite de : ".concat(transac.getMontant(), " nouveau solde ").concat(caisse.getSolde()));
+    } else {
+      console.log("Non pris en compte");
+    }
+  };
+
+  ViewSolde.prototype.update = function (caisse) {
+    this.span.className = 'soldeCouver';
+    this.span.innerText = caisse.getSolde().toString();
+  };
+
+  return ViewSolde;
+}();
+
+exports.ViewSolde = ViewSolde;
 },{}],"app.ts":[function(require,module,exports) {
 "use strict";
 
@@ -281,21 +441,39 @@ var listetransac_1 = require("./src/classes/listetransac");
 
 var transaction_1 = require("./src/classes/transaction");
 
+var viewEtat_1 = require("./src/classes/viewEtat");
+
+var viewListClient_1 = require("./src/classes/viewListClient");
+
+var viewNbreTransac_1 = require("./src/classes/viewNbreTransac");
+
+var viewSolde_1 = require("./src/classes/viewSolde");
+
 var form = document.querySelector('#form');
 var typeOp = document.querySelector('#typeOperation');
 var montant = document.querySelector('#montant');
-var motif = document.querySelector('#motif'); // let localStore = window.localStorage.account;
+var motif = document.querySelector('#motif');
+var nomClient = document.querySelector('#clientNom'); // let localStore = window.localStorage.account;
 // let listForm : object [];
 //let maCaisse = new Caisses(100000, []);
 
 var caisse = new caisse_1.Caisses(10000, []);
+var viewSolde = new viewSolde_1.ViewSolde();
+var viewNbreTransac = new viewNbreTransac_1.ViewNbreTransac();
+var viewEtat = new viewEtat_1.ViewEtat();
+viewSolde.update(caisse);
 form.addEventListener('submit', function (e) {
   e.preventDefault();
-  var laTransaction = new transaction_1.Transaction(typeOp.value, montant.valueAsNumber, motif.value);
+  var laTransaction = new transaction_1.Transaction(nomClient.value, typeOp.value, montant.valueAsNumber, motif.value);
   caisse.addTransac(laTransaction);
   var liste1 = new listetransac_1.listeTransac();
+  var viewListClient = new viewListClient_1.ViewListClient();
+  viewListClient.update(caisse);
   caisse.subscribe(liste1);
   liste1.update(caisse);
+  viewSolde.viewSolde(caisse, laTransaction);
+  viewNbreTransac.update(caisse);
+  viewEtat.update(caisse);
 }); // const render = (container : HTMLElement): void => {
 //     const li = document.createElement('li');
 //     const titreOp = document.createElement('h4');
@@ -303,7 +481,7 @@ form.addEventListener('submit', function (e) {
 //     titreOp.innerText = `${typeOp.value} === debit ? Debit : Credit`;
 //     parag.innerText = ` `;
 // }
-},{"./src/classes/caisse":"src/classes/caisse.ts","./src/classes/listetransac":"src/classes/listetransac.ts","./src/classes/transaction":"src/classes/transaction.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./src/classes/caisse":"src/classes/caisse.ts","./src/classes/listetransac":"src/classes/listetransac.ts","./src/classes/transaction":"src/classes/transaction.ts","./src/classes/viewEtat":"src/classes/viewEtat.ts","./src/classes/viewListClient":"src/classes/viewListClient.ts","./src/classes/viewNbreTransac":"src/classes/viewNbreTransac.ts","./src/classes/viewSolde":"src/classes/viewSolde.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -331,7 +509,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59924" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52590" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

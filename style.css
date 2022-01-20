@@ -1,8 +1,11 @@
-
+body{
+    min-width: 50vw;
+    min-height: fit-content;
+}
 header{
     background-color: gold;
     text-align: center;
-    height: 40vh;
+    height: fit-content;
     padding: auto;
 
 }
@@ -10,13 +13,12 @@ header{
 main{
     border: gold 2px solid;
     /* width:100vw; */
-    height:70vh;
+    /* height:70vh; */
 }
 footer{
     background-color: gold;
     padding: 15px;
-    height: fit-content;
-    
+    height: fit-content; 
 }
 ul{
     padding-left: 0px;
@@ -29,29 +31,52 @@ li{
     margin-left: 25%;
 }
 
-span{
-    color: black;
-}
-.debit{
+/* CSS importer des className */
+
+.credit{
 
     border:2px solid ;
     color: green;
 }
-.credit{
+.debit{
     border:2px solid ;
     color: rgb(209, 28, 28);
 }
+
+.etatRouge{
+    text-align: center;
+    height: 100px;
+    width: 100px;
+    background-color: red;
+    color: yellow;
+}
+
+.etatVert{
+    text-align: center;
+    height: 100px;
+    width: 100px;
+    background-color: green;
+    color: yellow;
+}
+
+.soldeDecouver{
+    color: red;
+}
+
+.soldeCouver{
+    color: green;
+}
+
+/* Fin CSS importer des className */
 form{
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
     align-items: center;
     /* flex-wrap: wrap; */
 
 }
 form div{
     width: 50%;
-
 }
 
 input, select{
@@ -66,3 +91,46 @@ input[type = "submit"] {
     background-color: black;
     color: gold;
 }
+
+/* Debut du container main */
+.subContainer-left{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    border: 1px solid green;
+    width: 25vw;
+}
+
+.liste-transac{
+    border: 1px solid yellow;
+    width: 50vw;
+}
+
+
+.subContainer-right{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border: 1px solid red;
+    width: 25vw;
+}
+.container{
+    display: flex;
+    justify-content: space-between;
+    flex: row;
+}
+
+/* Fin du container main */
+
+table, thead, th, td{
+ border: 1px solid black;
+
+}
+
+.table-nbr-transac{
+    width: 80%;
+    height: fit-content;
+}
+

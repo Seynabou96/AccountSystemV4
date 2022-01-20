@@ -26,12 +26,6 @@ export class Caisses implements ISubject{
         // this.notify()
         this.transactions.push(transac);
         console.log('addtransaction');
-        if (transac.getType() === 'debit') {
-            this.solde -= transac.getMontant();
-        }
-        else{
-            this.solde += transac.getMontant();
-        }
     }
     notify() {
         this.observer.forEach(obs=>obs.update(this))
@@ -43,6 +37,14 @@ export class Caisses implements ISubject{
     
     getSolde(){
         return this.solde;
+    }
+
+    setSoldeDebit(montant : number){
+        this.solde -= montant;
+    }
+
+    setSoldeCredit(montant : number){
+        this.solde += montant;
     }
     
    

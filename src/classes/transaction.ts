@@ -1,13 +1,18 @@
 export class Transaction {
-
+    public client : string;
     public typeTransac : string;
     public montantTtransac : number;
     public motifTransac : string;
 
-    constructor(type : string, montant : number, motif : string) {
+    constructor(nomClient : string, type : string, montant : number, motif : string) {
         this.typeTransac = type;
         this.montantTtransac = montant;
         this.motifTransac = motif;
+        this.client = nomClient;
+    }
+
+    getNomClient(){
+        return this.client;
     }
 
     getType(){
